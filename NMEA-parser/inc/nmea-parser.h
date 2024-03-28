@@ -8,14 +8,7 @@
 #include <string.h>
 #include <math.h>
 
-typedef struct NMEA_Struct
-{
-	struct NMEA_RMC* RMCData;
-	struct NMEA_GGA* GGAData;
-}NMEA;
-
-
-struct NMEA_RMC
+typedef struct NMEA_RMC
 {
 	uint8_t		Y[3];
 	uint8_t		M[3];
@@ -31,9 +24,9 @@ struct NMEA_RMC
 	uint8_t		EW;
 	float		Speed;
 	int8_t		Deg[128];
-};
+}RMC;
 
-struct NMEA_GGA
+typedef struct NMEA_GGA
 {
 	uint8_t		h[3];
 	uint8_t		m[3];
@@ -48,9 +41,17 @@ struct NMEA_GGA
 	float		Height;
 	uint8_t		Height_Unit;
 	int8_t		Deg[128];
-};
+}GGA;
 
-void Init_NMEA_Structs(NMEA* NMEA_Struct);
+
+typedef struct NMEA_Struct
+{
+	RMC RMCData;
+	GGA GGAData;
+}NMEA;
+
+
+
 void NMEA_Parse(uint8_t* Rx_Buff, NMEA* NMEA_Struct);
 uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct);
 uint8_t NMEA_Parse_GGA(const uint8_t* NMEA_Data, NMEA* NMEA_Struct);
@@ -59,5 +60,4 @@ uint8_t Compare_Checksum(const char* Str);
 void Convert_Coords_To_Degs(int8_t* Degs, float* Latitude, float* Longitude, uint8_t NS, uint8_t EW);
 void print_RMC(NMEA* NMEA_Struct);
 void print_GGA(NMEA* NMEA_Struct);
-void Free_NMEA_Struct(NMEA* NMEA_Struct);
 

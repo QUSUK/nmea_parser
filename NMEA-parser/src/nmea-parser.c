@@ -39,7 +39,7 @@ void NMEA_Parse(uint8_t* Rx_Buff, NMEA* NMEA_Struct)
 
 uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 {
-	memset(NMEA_Struct->RMCData, 0, sizeof(struct NMEA_RMC));
+	memset(&NMEA_Struct->RMCData, 0, sizeof(struct NMEA_RMC));
 
 	uint8_t	Num_Scan_Chars = 0;
 	uint8_t* Delim = (uint8_t*)",";
@@ -53,37 +53,37 @@ uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 		{
 		case 1:
 			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%2s%2s%2s.%3s",
-				NMEA_Struct->RMCData->h,
-				NMEA_Struct->RMCData->m,
-				NMEA_Struct->RMCData->s,
-				NMEA_Struct->RMCData->ms
+				NMEA_Struct->RMCData.h,
+				NMEA_Struct->RMCData.m,
+				NMEA_Struct->RMCData.s,
+				NMEA_Struct->RMCData.ms
 			);
 			break;
 		case 2:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData->Status);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.Status);
 			break;
 		case 3:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData->Latitude);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Latitude);
 			break;
 		case 4:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData->NS);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.NS);
 			break;
 		case 5:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData->Longitude);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Longitude);
 			break;
 		case 6:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData->EW);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.EW);
 			break;
 		case 7:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData->Speed);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Speed);
 			break;
 		case 8:
 			break;
 		case 9:
 			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%2s%2s%2s",
-				NMEA_Struct->RMCData->D,
-				NMEA_Struct->RMCData->M,
-				NMEA_Struct->RMCData->Y
+				NMEA_Struct->RMCData.D,
+				NMEA_Struct->RMCData.M,
+				NMEA_Struct->RMCData.Y
 			);
 			break;
 		}
@@ -91,10 +91,10 @@ uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 		Token = (uint8_t*)strstr((const char*)NMEA_Data, (const char*)Delim);
 	}
 
-	Convert_Coords_To_Degs(NMEA_Struct->RMCData->Deg, &NMEA_Struct->RMCData->Latitude, &NMEA_Struct->RMCData->Longitude,
-		NMEA_Struct->RMCData->NS, NMEA_Struct->RMCData->EW);
+	Convert_Coords_To_Degs(NMEA_Struct->RMCData.Deg, &NMEA_Struct->RMCData.Latitude, &NMEA_Struct->RMCData.Longitude,
+		NMEA_Struct->RMCData.NS, NMEA_Struct->RMCData.EW);
 
-	NMEA_Struct->RMCData->Speed *= (float)1.852;
+	NMEA_Struct->RMCData.Speed *= (float)1.852;
 
 	return Num_Scan_Chars;
 }
@@ -103,7 +103,7 @@ uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 
 uint8_t NMEA_Parse_GGA(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 {
-	memset(NMEA_Struct->GGAData, 0, sizeof(struct NMEA_GGA));
+	memset(&NMEA_Struct->GGAData, 0, sizeof(struct NMEA_GGA));
 
 	uint8_t	Num_Scan_Chars = 0;
 	uint8_t* Delim = (uint8_t*)",";
@@ -117,44 +117,44 @@ uint8_t NMEA_Parse_GGA(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 		{
 		case 1:
 			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%2s%2s%2s.%3s",
-				NMEA_Struct->GGAData->h,
-				NMEA_Struct->GGAData->m,
-				NMEA_Struct->GGAData->s,
-				NMEA_Struct->GGAData->ms
+				NMEA_Struct->GGAData.h,
+				NMEA_Struct->GGAData.m,
+				NMEA_Struct->GGAData.s,
+				NMEA_Struct->GGAData.ms
 			);
 			break;
 		case 2:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData->Latitude);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Latitude);
 			break;
 		case 3:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData->NS);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.NS);
 			break;
 		case 4:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData->Longitude);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Longitude);
 			break;
 		case 5:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData->EW);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.EW);
 			break;
 		case 6:
 			break;
 		case 7:
 			break;
 		case 8:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData->HDOP);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.HDOP);
 			break;
 		case 9:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData->Height);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Height);
 			break;
 		case 10:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData->Height_Unit);
+			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.Height_Unit);
 			break;
 		}
 		NMEA_Data = Token + 1;
 		Token = (uint8_t*)(char*)strstr((const char*)NMEA_Data, (const char*)Delim);
 	}
 
-	Convert_Coords_To_Degs(NMEA_Struct->GGAData->Deg, &NMEA_Struct->GGAData->Latitude, &NMEA_Struct->GGAData->Longitude,
-		NMEA_Struct->GGAData->NS, NMEA_Struct->GGAData->EW);
+	Convert_Coords_To_Degs(NMEA_Struct->GGAData.Deg, &NMEA_Struct->GGAData.Latitude, &NMEA_Struct->GGAData.Longitude,
+		NMEA_Struct->GGAData.NS, NMEA_Struct->GGAData.EW);
 
 	return Num_Scan_Chars;
 }
@@ -206,36 +206,29 @@ void Convert_Coords_To_Degs(int8_t* Degs, float* Latitude, float* Longitude, uin
 }
 
 
-void Init_NMEA_Structs(NMEA* NMEA_Struct)
-{
-	NMEA_Struct->RMCData = (struct NMEA_RMC*)malloc(sizeof(struct NMEA_RMC));
-	NMEA_Struct->GGAData = (struct NMEA_GGA*)malloc(sizeof(struct NMEA_GGA));
-}
-
-
 void print_RMC(NMEA* NMEA_Struct)
 {
-	if (NMEA_Struct->RMCData == NULL)
+	if (&NMEA_Struct->RMCData == NULL)
 	{
 		printf("RMC is NULL\n");
 		return;
 	}
 	printf("\n========================================================================\n");
 	printf("Command RMC:\n");
-	printf("h: %s\n",					NMEA_Struct->RMCData->h);
-	printf("m: %s\n",					NMEA_Struct->RMCData->m);
-	printf("s: %s\n",					NMEA_Struct->RMCData->s);
-	printf("ms: %s\n",					NMEA_Struct->RMCData->ms);
-	printf("Status: %c\n",				NMEA_Struct->RMCData->Status);
-	printf("Latitude: %f\n",			NMEA_Struct->RMCData->Latitude);
-	printf("NS: %c\n",					NMEA_Struct->RMCData->NS);
-	printf("Longitude: %f\n",			NMEA_Struct->RMCData->Longitude);
-	printf("EW: %c\n",					NMEA_Struct->RMCData->EW);
-	printf("Speed: %f\n",				NMEA_Struct->RMCData->Speed);
-	printf("Y: %s\n",					NMEA_Struct->RMCData->Y);
-	printf("M: %s\n",					NMEA_Struct->RMCData->M);
-	printf("D: %s\n",					NMEA_Struct->RMCData->D);
-	printf("Deg: %s\n",					NMEA_Struct->RMCData->Deg);
+	printf("h: %s\n",					NMEA_Struct->RMCData.h);
+	printf("m: %s\n",					NMEA_Struct->RMCData.m);
+	printf("s: %s\n",					NMEA_Struct->RMCData.s);
+	printf("ms: %s\n",					NMEA_Struct->RMCData.ms);
+	printf("Status: %c\n",				NMEA_Struct->RMCData.Status);
+	printf("Latitude: %f\n",			NMEA_Struct->RMCData.Latitude);
+	printf("NS: %c\n",					NMEA_Struct->RMCData.NS);
+	printf("Longitude: %f\n",			NMEA_Struct->RMCData.Longitude);
+	printf("EW: %c\n",					NMEA_Struct->RMCData.EW);
+	printf("Speed: %f\n",				NMEA_Struct->RMCData.Speed);
+	printf("Y: %s\n",					NMEA_Struct->RMCData.Y);
+	printf("M: %s\n",					NMEA_Struct->RMCData.M);
+	printf("D: %s\n",					NMEA_Struct->RMCData.D);
+	printf("Deg: %s\n",					NMEA_Struct->RMCData.Deg);
 	printf("========================================================================\n");
 }
 
@@ -243,33 +236,25 @@ void print_RMC(NMEA* NMEA_Struct)
 
 void print_GGA(NMEA* NMEA_Struct)
 {
-	if (NMEA_Struct->GGAData == NULL)
+	if (&NMEA_Struct->GGAData == NULL)
 	{
 		printf("GGA is NULL\n");
 		return;
 	}
 	printf("\n========================================================================\n");
 	printf("Command GGA:\n");
-	printf("h: %s\n",					NMEA_Struct->GGAData->h);
-	printf("m: %s\n",					NMEA_Struct->GGAData->m);
-	printf("s: %s\n",					NMEA_Struct->GGAData->s);
-	printf("ms: %s\n",					NMEA_Struct->GGAData->ms);
-	printf("Latitude: %f\n",			NMEA_Struct->GGAData->Latitude);
-	printf("NS: %c\n",					NMEA_Struct->GGAData->NS);
-	printf("Longitude: %f\n",			NMEA_Struct->GGAData->Longitude);
-	printf("EW: %c\n",					NMEA_Struct->GGAData->EW);
-	printf("HDOP: %f\n",				NMEA_Struct->GGAData->HDOP);
-	printf("Height: %f\n",				NMEA_Struct->GGAData->Height);
-	printf("HeightUnit: %c\n",			NMEA_Struct->GGAData->Height_Unit);
-	printf("Deg: %s\n",					NMEA_Struct->GGAData->Deg);
+	printf("h: %s\n",					NMEA_Struct->GGAData.h);
+	printf("m: %s\n",					NMEA_Struct->GGAData.m);
+	printf("s: %s\n",					NMEA_Struct->GGAData.s);
+	printf("ms: %s\n",					NMEA_Struct->GGAData.ms);
+	printf("Latitude: %f\n",			NMEA_Struct->GGAData.Latitude);
+	printf("NS: %c\n",					NMEA_Struct->GGAData.NS);
+	printf("Longitude: %f\n",			NMEA_Struct->GGAData.Longitude);
+	printf("EW: %c\n",					NMEA_Struct->GGAData.EW);
+	printf("HDOP: %f\n",				NMEA_Struct->GGAData.HDOP);
+	printf("Height: %f\n",				NMEA_Struct->GGAData.Height);
+	printf("HeightUnit: %c\n",			NMEA_Struct->GGAData.Height_Unit);
+	printf("Deg: %s\n",					NMEA_Struct->GGAData.Deg);
 	printf("========================================================================\n");
 }
 
-
-void Free_NMEA_Struct(NMEA* NMEA_Struct)
-{
-	if (NMEA_Struct->RMCData != NULL)
-		free(NMEA_Struct->RMCData);
-	if (NMEA_Struct->GGAData != NULL)
-		free(NMEA_Struct->GGAData);
-}

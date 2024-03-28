@@ -10,8 +10,6 @@ int main()
 {
 
 	NMEA GPSData;
-	Init_NMEA_Structs(&GPSData);
-	
 	
 	LARGE_INTEGER frequency, start, end;
 	double elapsed;
@@ -30,6 +28,5 @@ int main()
 	//NMEA_Parse(RxBuff_, &GPSData);
 	print_RMC(&GPSData);
 	print_GGA(&GPSData);
-	Free_NMEA_Struct(&GPSData);
 	return (0);
 }
