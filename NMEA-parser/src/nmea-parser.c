@@ -1,12 +1,10 @@
 #include "nmea-parser.h"
 
-
 void NMEA_Parse(uint8_t* Rx_Buff, NMEA* NMEA_Struct)
 {
 	uint8_t* Token = (uint8_t*)strtok((char*)Rx_Buff, "$");
 	while (Token != NULL)
 	{
-		printf("%s\n", Token);
 		char Message_Type[7];
 
 		if (sscanf((const char*)Token, "%6[^,]", Message_Type) == 0)
@@ -17,7 +15,7 @@ void NMEA_Parse(uint8_t* Rx_Buff, NMEA* NMEA_Struct)
 
 		Message_Type[6] = '\0';
 
-		if ((strcmp(Message_Type, "GNRMC") == 0) || (strcmp(Message_Type, "GPRMC") == 0))
+		if ( (strcmp(Message_Type, "GNRMC") == 0) || (strcmp(Message_Type, "GPRMC") == 0) )
 		{
 			if (Compare_Checksum((const char*)Token))
 			{
@@ -39,6 +37,7 @@ void NMEA_Parse(uint8_t* Rx_Buff, NMEA* NMEA_Struct)
 
 uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 {
+	uint8_t time[10];
 	memset(&NMEA_Struct->RMCData, 0, sizeof(struct NMEA_RMC));
 
 	uint8_t	Num_Scan_Chars = 0;
@@ -52,35 +51,39 @@ uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 		switch (Counter)
 		{
 		case 1:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%2s%2s%2s.%3s",
+			
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%2s%2s%2s.%3s",
 				NMEA_Struct->RMCData.h,
 				NMEA_Struct->RMCData.m,
 				NMEA_Struct->RMCData.s,
 				NMEA_Struct->RMCData.ms
 			);
+			strncpy((char*)time, (const char*)NMEA_Data, 9);
+			sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Time);
 			break;
 		case 2:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.Status);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.Status);
 			break;
 		case 3:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Latitude);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Latitude);
 			break;
 		case 4:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.NS);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.NS);
 			break;
 		case 5:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Longitude);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Longitude);
 			break;
 		case 6:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.EW);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->RMCData.EW);
 			break;
 		case 7:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Speed);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Speed);
 			break;
 		case 8:
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->RMCData.Course);
 			break;
 		case 9:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%2s%2s%2s",
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%2s%2s%2s",
 				NMEA_Struct->RMCData.D,
 				NMEA_Struct->RMCData.M,
 				NMEA_Struct->RMCData.Y
@@ -94,7 +97,7 @@ uint8_t NMEA_Parse_RMC(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 	Convert_Coords_To_Degs(NMEA_Struct->RMCData.Deg, &NMEA_Struct->RMCData.Latitude, &NMEA_Struct->RMCData.Longitude,
 		NMEA_Struct->RMCData.NS, NMEA_Struct->RMCData.EW);
 
-	NMEA_Struct->RMCData.Speed *= (float)1.852;
+	NMEA_Struct->RMCData.Speed *= 1.852;
 
 	return Num_Scan_Chars;
 }
@@ -116,7 +119,7 @@ uint8_t NMEA_Parse_GGA(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 		switch (Counter)
 		{
 		case 1:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%2s%2s%2s.%3s",
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%2s%2s%2s.%3s",
 				NMEA_Struct->GGAData.h,
 				NMEA_Struct->GGAData.m,
 				NMEA_Struct->GGAData.s,
@@ -124,38 +127,40 @@ uint8_t NMEA_Parse_GGA(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 			);
 			break;
 		case 2:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Latitude);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Latitude);
 			break;
 		case 3:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.NS);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.NS);
 			break;
 		case 4:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Longitude);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Longitude);
 			break;
 		case 5:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.EW);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.EW);
 			break;
 		case 6:
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%hhu", &NMEA_Struct->GGAData.Pos_Status);
 			break;
 		case 7:
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%hhu", &NMEA_Struct->GGAData.Satellites);
 			break;
 		case 8:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.HDOP);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.HDOP);
 			break;
 		case 9:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Height);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%f", &NMEA_Struct->GGAData.Height);
 			break;
 		case 10:
-			Num_Scan_Chars += (uint8_t)sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.Height_Unit);
+			Num_Scan_Chars += sscanf((const char*)NMEA_Data, "%c", &NMEA_Struct->GGAData.Height_Unit);
 			break;
 		}
 		NMEA_Data = Token + 1;
-		Token = (uint8_t*)(char*)strstr((const char*)NMEA_Data, (const char*)Delim);
+		Token = (uint8_t*) (char*)strstr((const char*)NMEA_Data, (const char*)Delim);
 	}
 
 	Convert_Coords_To_Degs(NMEA_Struct->GGAData.Deg, &NMEA_Struct->GGAData.Latitude, &NMEA_Struct->GGAData.Longitude,
 		NMEA_Struct->GGAData.NS, NMEA_Struct->GGAData.EW);
-
+	
 	return Num_Scan_Chars;
 }
 
@@ -163,14 +168,13 @@ uint8_t NMEA_Parse_GGA(const uint8_t* NMEA_Data, NMEA* NMEA_Struct)
 uint16_t NMEA_Check_Sum_Calc(const char* NMEA_Data)
 {
 	uint16_t Checksum = 0;
-	char i = 0;
+	int32_t i = 0;
 
 	while (NMEA_Data[i] != '*' && NMEA_Data[i] != '\0')
 	{
 		Checksum ^= NMEA_Data[i];
 		i++;
 	}
-	printf("Checksum: %X\n", Checksum);
 
 	return Checksum;
 }
@@ -199,7 +203,7 @@ void Convert_Coords_To_Degs(int8_t* Degs, float* Latitude, float* Longitude, uin
 	Lat_Deg = (float)((int)*Latitude / 100 + fmod(*Latitude, 100) / 60.0);
 	Lat_Deg = (NS == 'N') ? +Lat_Deg : -Lat_Deg;
 
-	Lon_Deg = (float)((int)*Longitude / 100 + (float)fmod(*Longitude, 100) / 60.0);
+	Lon_Deg = (float)((int)*Longitude / 100 + fmod(*Longitude, 100) / 60.0);
 	Lon_Deg = (EW == 'E') ? +Lon_Deg : -Lon_Deg;
 
 	sprintf((char*)Degs, "%.8lf %.8lf", Lat_Deg, Lon_Deg);
